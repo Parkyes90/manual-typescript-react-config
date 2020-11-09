@@ -1,10 +1,34 @@
+require("dotenv").config();
+const webpack = require("webpack");
+const ManifestPlugin = require("webpack-manifest-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const getClientEnv = (nodeEnv) => {
+  return {
+    "process.env": JSON.stringify(
+      Object.keys(process.env)
+        .filter((key) => /^REACT_APP/i.test(key))
+        .reduce(
+          (env, key) => {
+            env[key] = process.env[key];
+            return env;
+          },
+          { NODE_ENV: nodeEnv }
+        )
+    ),
+  };
+};
 const path = require("path");
 const appIndex = path.resolve(__dirname, "src", "index.tsx");
 const appBuild = path.resolve(__dirname, "build");
 const appSrc = path.resolve(__dirname, "src");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const appHtml = path.resolve(__dirname, "public", "index.html");
+const appPublic = path.resolve(__dirname, "public");
+
 module.exports = (webpackEnv) => {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
+  const clientEnv = getClientEnv(webpackEnv);
   return {
     entry: appIndex,
     mode: webpackEnv,
@@ -54,13 +78,34 @@ module.exports = (webpackEnv) => {
           loader: "eslint-loader",
           options: {
             cache: true,
-            formatter: isEnvProduction
-              ? "codeframe"
-              : isEnvProduction && "stylish",
+            formatter: isEnvProduction ? "codeframe" : "stylish",
           },
           include: appSrc,
         },
       ],
+    },
+    resolve: {
+      extensions: [".tsx", ".ts", ".js"],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({ template: appHtml }),
+      new webpack.DefinePlugin(clientEnv),
+      new ForkTsCheckerWebpackPlugin({
+        eslint: {
+          files: "./src/**/*.{ts,tsx,js,jsx}",
+        },
+      }),
+    ],
+    cache: {
+      type: isEnvDevelopment ? "memory" : "filesystem",
+    },
+    devServer: {
+      port: 3000,
+      contentBase: appPublic,
+      open: true,
+      historyApiFallback: true,
+      overlay: true,
+      stats: true,
     },
   };
 };

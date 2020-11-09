@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "webpack serve",
+    "build": "webpack --mode production --env production",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
     "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx ./ --fix"
   },
@@ -19,6 +21,7 @@
   },
   "homepage": "https://github.com/Parkyes90/manual-typescript-react-config#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
@@ -41,10 +44,14 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^6.0.0",
+    "html-webpack-plugin": "^4.5.0",
     "ts-loader": "^8.0.7",
     "typescript": "^4.0.5",
     "url-loader": "^4.1.1",
     "webpack": "^5.3.2",
-    "webpack-cli": "^4.1.0"
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-manifest-plugin": "^2.2.0"
   }
 }
