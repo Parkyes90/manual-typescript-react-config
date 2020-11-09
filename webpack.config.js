@@ -1,6 +1,7 @@
 const path = require("path");
 const appIndex = path.resolve(__dirname, "src", "index.tsx");
 const appBuild = path.resolve(__dirname, "build");
+const appSrc = path.resolve(__dirname, "src");
 module.exports = (webpackEnv) => {
   const isEnvDevelopment = webpackEnv === "development";
   const isEnvProduction = webpackEnv === "production";
@@ -45,6 +46,19 @@ module.exports = (webpackEnv) => {
             outputPath: "static/media",
             name: "[name].[hash:8].[ext]",
           },
+        },
+        {
+          test: /\.(ts|tsx)$/,
+          enforce: "pre",
+          exclude: /node_modules/,
+          loader: "eslint-loader",
+          options: {
+            cache: true,
+            formatter: isEnvProduction
+              ? "codeframe"
+              : isEnvProduction && "stylish",
+          },
+          include: appSrc,
         },
       ],
     },
